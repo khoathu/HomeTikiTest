@@ -18,8 +18,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     private Context mContext;
     private ArrayList<String> productList;
     private String[] arrayColors;
-    private OnItemClickListener onItemClickListener;
     private String defaultColor = "#00793b";
+    private OnItemClickListener onItemClickListener;
 
     public ProductAdapter(Context context, ArrayList<String> arrayItems, String[] arrayColors, OnItemClickListener listener) {
         this.mContext = context;
@@ -28,7 +28,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         this.onItemClickListener = listener;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private RelativeLayout rlItem;
         private TextView tvTitle;
@@ -37,6 +37,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             super(view);
             rlItem = (RelativeLayout) view.findViewById(R.id.rlItem);
             tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(productList.get(getAdapterPosition()));
+            }
         }
     }
 
@@ -60,15 +68,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
 
             GradientDrawable drawable = (GradientDrawable) holder.rlItem.getBackground();
             drawable.setColor(Color.parseColor(arrayColors != null ? arrayColors[getPositionBackground(position, arrayColors.length)] : defaultColor));
-
-            holder.rlItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (onItemClickListener != null) {
-                        onItemClickListener.onItemClick(productList.get(holder.getAdapterPosition()));
-                    }
-                }
-            });
 
         }
     }
