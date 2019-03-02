@@ -1,0 +1,9 @@
+<application>
+  <component name="FileTypeManager" version="17">
+    <extensionMap>
+      <mapping pattern="systemParams" type="PLAIN_TEXT" />
+      <mapping pattern="mastercard_en" type="PLAIN_TEXT" />
+      <mapping ext="jks" type="PLAIN_TEXT" />
+    </extensionMap>
+  </component>
+</application>
