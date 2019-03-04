@@ -9,33 +9,42 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHolder> {
     private Context mContext;
     private ArrayList<String> productList;
     private String[] arrayColors;
+    private String defaultColor = "#00793b";
+    private OnItemClickListener onItemClickListener;
 
-    public ProductAdapter(Context context, ArrayList<String> arrayItems, String[] arrayColors) {
+    public ProductAdapter(Context context, ArrayList<String> arrayItems, String[] arrayColors, OnItemClickListener listener) {
         this.mContext = context;
         this.productList = arrayItems;
         this.arrayColors = arrayColors;
+        this.onItemClickListener = listener;
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private LinearLayout llItem;
+        private RelativeLayout rlItem;
         private TextView tvTitle;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
-            llItem = (LinearLayout) view.findViewById(R.id.llItem);
+            rlItem = (RelativeLayout) view.findViewById(R.id.rlItem);
             tvTitle = (TextView) view.findViewById(R.id.tvTitle);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(productList.get(getAdapterPosition()));
+            }
         }
     }
 
@@ -48,28 +57,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
 
         String text = productList.get(position);
-        
+
         if (!TextUtils.isEmpty(getFormatText(text))) {
 
             holder.tvTitle.setText(getFormatText(text));
-            holder.llItem.setBackgroundResource(R.drawable.bg_boder);
+            holder.rlItem.setBackgroundResource(R.drawable.bg_boder);
 
-            final GradientDrawable drawable = (GradientDrawable) holder.llItem.getBackground();
+            GradientDrawable drawable = (GradientDrawable) holder.rlItem.getBackground();
+            drawable.setColor(Color.parseColor(arrayColors != null ? arrayColors[getPositionBackground(position, arrayColors.length)] : defaultColor));
 
-            drawable.setColor(Color.parseColor(arrayColors[getPositionBackground(position, arrayColors.length)]));
-
-            holder.llItem.setOnClickListener(new View.OnClickListener() {
-                @Override
-
-                public void onClick(View v) {
-                    String list = productList.get(position);
-                    Toast.makeText(mContext, list, Toast.LENGTH_SHORT).show();
-                }
-
-            });
         }
     }
 
@@ -101,8 +100,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
             do {
                 boolean isAvailablePrev = false;
                 boolean isAvailableNext = false;
-                prevCharacter = new Character(text.charAt(prevPosition - 1));
-                nextCharacter = new Character(text.charAt(nextPosition - 1));
+                prevCharacter = text.charAt(prevPosition - 1);
+                nextCharacter = text.charAt(nextPosition - 1);
                 if (prevPosition > 1) {
                     prevPosition--;
                     isAvailablePrev = true;
@@ -132,26 +131,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         return resultString;
     }
 
-    public static int count(String s, char c) {
+    private int count(String s, char c) {
         return s.length() == 0 ? 0 : (s.charAt(0) == c ? 1 : 0) + count(s.substring(1), c);
-    }
-
-    public static String[] split(String src, int len) {
-        String[] result = new String[(int) Math.ceil((double) src.length() / (double) len)];
-        for (int i = 0; i < result.length; i++)
-            result[i] = src.substring(i * len, Math.min(src.length(), (i + 1) * len));
-        return result;
-    }
-
-    public static String[] splitByNumber(String str, int size) {
-        return (size < 1 || str == null) ? null : str.split("(?<=\\G.{" + size + "})");
-    }
-
-    private int getPositionRandom(int min, int max) {
-        Random r = new Random();
-        int i1 = r.nextInt(max - min + 1) + min;
-        return i1;
-        //Note that nextInt(int max) returns an int between 0 inclusive and max exclusive.
     }
 
     private int getPositionBackground(int position, int lenghListColor) {
@@ -162,6 +143,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
         return positionResult;
     }
 
+    /*private int getPositionRandom(int min, int max) {
+        Random r = new Random();
+        int i1 = r.nextInt(max - min + 1) + min;
+        return i1;
+        //Note that nextInt(int max) returns an int between 0 inclusive and max exclusive.
+    }*/
+
     @Override
     public long getItemId(int position) {
         return 0;
@@ -170,5 +158,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.MyViewHo
     @Override
     public int getItemCount() {
         return productList == null ? 0 : productList.size();
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(String item);
     }
 }

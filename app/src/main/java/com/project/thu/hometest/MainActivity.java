@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
     public static final String TAG = "MainActivity";
     private String fileName = "keywords.json";
     private ArrayList<String> listItems;
@@ -53,23 +54,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpList() {
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        listItems.addAll(listItems);
-        productAdapter = new ProductAdapter(this, listItems, arrayColors);
+        productAdapter = new ProductAdapter(this, listItems, arrayColors, this);
         LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
         rvProduct.setLayoutManager(horizontalLayoutManager);
         rvProduct.setAdapter(productAdapter);
@@ -90,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static String getStringFileFromAssert(Context context, String fileName) {
-        InputStream is = null;
-        Writer writer = null;
+        InputStream is;
+        Writer writer;
         String text = "";
         try {
             is = context.getAssets().open(fileName);
@@ -122,5 +107,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onItemClick(String item) {
+        Toast.makeText(this, item, Toast.LENGTH_SHORT).show();
     }
 }
