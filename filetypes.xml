@@ -3,6 +3,7 @@
     <extensionMap>
       <mapping pattern="systemParams" type="PLAIN_TEXT" />
       <mapping pattern="mastercard_en" type="PLAIN_TEXT" />
+      <mapping ext="bks" type="PLAIN_TEXT" />
       <mapping ext="jks" type="PLAIN_TEXT" />
     </extensionMap>
   </component>
